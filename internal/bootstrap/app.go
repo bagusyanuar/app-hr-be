@@ -9,9 +9,13 @@ import (
 func initialize() *config.AppConfig {
 	viper := config.NewViper()
 	app := config.NewFiber(viper)
+	cfgDB := config.NewDatabaseConfig(viper)
+	db := config.NewDatabaseConnection(cfgDB)
+
 	return &config.AppConfig{
 		App:   app,
 		Viper: viper,
+		DB:    db,
 	}
 }
 
