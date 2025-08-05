@@ -1,0 +1,13 @@
+package config
+
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+)
+
+type AppConfig struct {
+	App    *fiber.App
+	Viper  *viper.Viper
+	Logger *zap.Logger
+}
