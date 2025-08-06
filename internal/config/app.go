@@ -12,4 +12,5 @@ type AppConfig struct {
 	Viper  *viper.Viper
 	Logger *zap.Logger
 	DB     *gorm.DB
+	JWT    *JWTConfig
 }

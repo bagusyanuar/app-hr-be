@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/bagusyanuar/app-hr-be/internal/config"
+	"github.com/bagusyanuar/app-hr-be/internal/di"
+	"github.com/bagusyanuar/app-hr-be/internal/http"
 )
 
 func initialize() *config.AppConfig {
@@ -13,18 +15,22 @@ func initialize() *config.AppConfig {
 	defer logger.Sync()
 	cfgDB := config.NewDatabaseConfig(viper)
 	db := config.NewDatabaseConnection(cfgDB)
+	cfgJWT := config.NewJWTManager(viper)
 
 	return &config.AppConfig{
 		App:    app,
 		Viper:  viper,
 		DB:     db,
 		Logger: logger,
+		JWT:    cfgJWT,
 	}
 }
 
 func Start() {
 	cfg := initialize()
 
+	diHandler := di.InitializeDIHandler(cfg)
+	http.NewRouter(cfg, diHandler)
 	envPort := cfg.Viper.GetString("APP_PORT")
 	port := fmt.Sprintf(":%s", envPort)
 	server := cfg.App
