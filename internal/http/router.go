@@ -9,4 +9,5 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerDI) {
 	app := cfg.App
 
 	app.Get("/", handler.Home.Index)
+	app.Post("/auth/login", handler.Auth.Login)
 }

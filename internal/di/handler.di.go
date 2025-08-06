@@ -8,10 +8,12 @@ import (
 // dependency injection for handler package
 type HandlerDI struct {
 	Home *handler.HomeHandler
+	Auth *handler.AuthHandler
 }
 
-func InitializeDIHandler(cfg *config.AppConfig) *HandlerDI {
+func InitializeDIHandler(cfg *config.AppConfig, diService *ServiceDI) *HandlerDI {
 	return &HandlerDI{
 		Home: handler.NewHomeHandler(cfg),
+		Auth: handler.NewAuthHandler(diService.Auth, cfg),
 	}
 }

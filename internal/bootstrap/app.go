@@ -29,7 +29,10 @@ func initialize() *config.AppConfig {
 func Start() {
 	cfg := initialize()
 
-	diHandler := di.InitializeDIHandler(cfg)
+	// initialize dependency injection
+	diRepository := di.InitializeDIRepository(cfg)
+	diService := di.InitializeDIService(cfg, diRepository)
+	diHandler := di.InitializeDIHandler(cfg, diService)
 	http.NewRouter(cfg, diHandler)
 	envPort := cfg.Viper.GetString("APP_PORT")
 	port := fmt.Sprintf(":%s", envPort)
