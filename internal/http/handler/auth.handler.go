@@ -5,6 +5,7 @@ import (
 	"github.com/bagusyanuar/app-hr-be/internal/domain/dto"
 	"github.com/bagusyanuar/app-hr-be/internal/service"
 	"github.com/bagusyanuar/app-hr-be/pkg/response"
+	"github.com/bagusyanuar/app-hr-be/pkg/util"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -32,12 +33,20 @@ func (c *AuthHandler) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
+	messages, err := util.Validate(c.Config.Validator, request)
+	if err != nil {
+		return response.MakeAPIResponse(ctx, response.APIResponse[any]{
+			Message: fiber.ErrUnprocessableEntity.Error(),
+			Code:    fiber.StatusUnprocessableEntity,
+			Data:    messages,
+		})
+	}
+
 	data, err := c.AuthService.Login(ctx.UserContext(), request)
 	if err != nil {
 		return response.MakeAPIResponse(ctx, response.APIResponse[any]{
 			Message: err.Error(),
 			Code:    fiber.StatusInternalServerError,
-			// Data:    data,
 		})
 	}
 	return response.MakeAPIResponse(ctx, response.APIResponse[*dto.LoginDTO]{

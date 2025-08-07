@@ -16,13 +16,15 @@ func initialize() *config.AppConfig {
 	cfgDB := config.NewDatabaseConfig(viper)
 	db := config.NewDatabaseConnection(cfgDB)
 	cfgJWT := config.NewJWTManager(viper)
+	validator := config.NewValidator()
 
 	return &config.AppConfig{
-		App:    app,
-		Viper:  viper,
-		DB:     db,
-		Logger: logger,
-		JWT:    cfgJWT,
+		App:       app,
+		Viper:     viper,
+		DB:        db,
+		Logger:    logger,
+		JWT:       cfgJWT,
+		Validator: validator,
 	}
 }
 
