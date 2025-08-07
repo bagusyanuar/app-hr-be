@@ -45,9 +45,14 @@ func (a *authServiceImpl) Login(ctx context.Context, schema *dto.LoginSchema) (*
 		return nil, err
 	}
 
+	refreshToken, err := a.createRefreshToken(user)
+	if err != nil {
+		return nil, err
+	}
+
 	response := &dto.LoginDTO{
 		AccessToken:  accessToken,
-		RefreshToken: "",
+		RefreshToken: refreshToken,
 	}
 	return response, nil
 }
@@ -62,4 +67,16 @@ func (a *authServiceImpl) createAccessToken(user *entity.User) (string, error) {
 	}
 	accessToken := jwt.NewWithClaims(JWTSignInMethod, claims)
 	return accessToken.SignedString([]byte(a.Config.JWT.Secret))
+}
+
+func (a *authServiceImpl) createRefreshToken(user *entity.User) (string, error) {
+	JWTSignInMethod := jwt.SigningMethodHS256
+	exp := time.Now().Add(time.Hour * 24 * time.Duration(a.Config.JWT.ExpirationRefreh))
+	claims := jwt.RegisteredClaims{
+		Issuer:    a.Config.JWT.Issuer,
+		ExpiresAt: jwt.NewNumericDate(exp),
+		Subject:   user.ID.String(),
+	}
+	refreshToken := jwt.NewWithClaims(JWTSignInMethod, claims)
+	return refreshToken.SignedString([]byte(a.Config.JWT.SecretRefresh))
 }
