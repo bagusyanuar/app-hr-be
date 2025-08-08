@@ -8,11 +8,13 @@ import (
 )
 
 type Branch struct {
-	ID        uuid.UUID
+	ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
+	Address   *BranchAddress  `gorm:"foreignKey:BranchID"`
+	Contacts  []BranchContact `gorm:"foreignKey:BranchID"`
 }
 
 func (e *Branch) BeforeCreate(tx *gorm.DB) (err error) {
