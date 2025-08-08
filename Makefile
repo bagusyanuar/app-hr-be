@@ -33,6 +33,7 @@ migrate-create:
 	@$(MIGRATE) create -ext sql -dir $(MIGRATION_PATH) -seq $(name)
 	@echo Creating migration completed.
 
+# use for rollback
 migrate-goto:
 	@$(MIGRATE) -path $(MIGRATION_PATH) -database "$(DB_URL)" goto $(version)
 

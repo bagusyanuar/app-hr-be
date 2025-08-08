@@ -6,11 +6,13 @@ import (
 )
 
 type RepositoryDI struct {
-	User repository.UserRepository
+	User   repository.UserRepository
+	Branch repository.BranchRepository
 }
 
 func InitializeDIRepository(cfg *config.AppConfig) *RepositoryDI {
 	return &RepositoryDI{
-		User: repository.NewUserRepository(cfg.DB),
+		User:   repository.NewUserRepository(cfg.DB),
+		Branch: repository.NewBranchRepository(cfg.DB),
 	}
 }
