@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"reflect"
 	"regexp"
 	"strings"
@@ -36,8 +37,16 @@ func NewValidator() *validator.Validate {
 		panic("failed to register symbol validation: " + err.Error())
 	}
 
+	if err := RegisterArrayValidation(v); err != nil {
+		panic("failed to register array validation: " + err.Error())
+	}
+
 	if err := RegisterSymbolTranslation(v, trans); err != nil {
 		panic("failed to register symbol translation: " + err.Error())
+	}
+
+	if err := RegisterArrayTranslation(v, trans); err != nil {
+		panic("failed to register array translation: " + err.Error())
 	}
 
 	return v
@@ -52,6 +61,23 @@ func RegisterSymbolValidation(v *validator.Validate) error {
 	})
 }
 
+func RegisterArrayValidation(v *validator.Validate) error {
+	return v.RegisterValidation("array", func(fl validator.FieldLevel) bool {
+		raw, ok := fl.Field().Interface().(json.RawMessage)
+		if !ok {
+			return false
+		}
+
+		var tmp any
+		if err := json.Unmarshal(raw, &tmp); err != nil {
+			return false
+		}
+
+		_, isArray := tmp.([]any) // cek apakah hasil decode adalah array JSON
+		return isArray
+	})
+}
+
 func RegisterSymbolTranslation(v *validator.Validate, trans ut.Translator) error {
 	return v.RegisterTranslation("symbol", trans,
 		func(ut ut.Translator) error {
@@ -59,6 +85,18 @@ func RegisterSymbolTranslation(v *validator.Validate, trans ut.Translator) error
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("symbol", fe.Field())
+			return t
+		},
+	)
+}
+
+func RegisterArrayTranslation(v *validator.Validate, trans ut.Translator) error {
+	return v.RegisterTranslation("array", trans,
+		func(ut ut.Translator) error {
+			return ut.Add("array", "{0} must be an array", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("array", fe.Field())
 			return t
 		},
 	)

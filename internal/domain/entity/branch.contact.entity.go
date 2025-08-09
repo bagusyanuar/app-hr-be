@@ -11,6 +11,7 @@ type BranchContact struct {
 	ID        uuid.UUID
 	BranchID  *uuid.UUID
 	Type      string
+	Name      *string
 	Value     string
 	CreatedAt time.Time
 	UpdatedAt time.Time

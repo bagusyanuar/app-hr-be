@@ -27,5 +27,5 @@ func (e *Branch) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (e *Branch) TableName() string {
-	return "branchs"
+	return "branches"
 }

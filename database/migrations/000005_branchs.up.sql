@@ -1,8 +1,8 @@
 -- Enable UUID support
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Create branchs table
-CREATE TABLE branchs (
+-- Create branches table
+CREATE TABLE branches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT now(),
@@ -11,4 +11,4 @@ CREATE TABLE branchs (
 );
 
 -- Index for soft deletes
-CREATE INDEX idx_branchs_deleted_at ON branchs(deleted_at);
+CREATE INDEX idx_branches_deleted_at ON branches(deleted_at);

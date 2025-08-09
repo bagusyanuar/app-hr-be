@@ -24,6 +24,39 @@ func NewBranchHandler(
 	}
 }
 
+func (c *BranchHandler) FindAll(ctx *fiber.Ctx) error {
+	queryParams := new(schema.BranchQuery)
+	if err := ctx.QueryParser(queryParams); err != nil {
+		return response.MakeAPIResponse(ctx, response.APIResponse[any]{
+			Message: err.Error(),
+			Code:    fiber.StatusBadRequest,
+		})
+	}
+
+	messages, err := util.Validate(c.Config.Validator, queryParams)
+	if err != nil {
+		return response.MakeAPIResponse(ctx, response.APIResponse[any]{
+			Message: fiber.ErrUnprocessableEntity.Error(),
+			Code:    fiber.StatusUnprocessableEntity,
+			Data:    messages,
+		})
+	}
+
+	data, pagination, err := c.BranchService.FindAll(ctx.UserContext(), queryParams)
+	if err != nil {
+		return response.MakeAPIResponse(ctx, response.APIResponse[any]{
+			Message: err.Error(),
+			Code:    fiber.StatusInternalServerError,
+		})
+	}
+	return response.MakeAPIResponse(ctx, response.APIResponse[any]{
+		Message: "successfully get branches",
+		Code:    fiber.StatusOK,
+		Data:    data,
+		Meta:    pagination,
+	})
+}
+
 func (c *BranchHandler) Create(ctx *fiber.Ctx) error {
 	request := new(schema.BranchSchema)
 	if err := ctx.BodyParser(request); err != nil {
@@ -51,6 +84,6 @@ func (c *BranchHandler) Create(ctx *fiber.Ctx) error {
 	}
 	return response.MakeAPIResponse(ctx, response.APIResponse[any]{
 		Message: "successfully create new branch",
-		Code:    fiber.StatusOK,
+		Code:    fiber.StatusCreated,
 	})
 }

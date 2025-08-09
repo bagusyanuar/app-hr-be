@@ -8,11 +8,12 @@ import (
 	"github.com/bagusyanuar/app-hr-be/internal/domain/entity"
 	"github.com/bagusyanuar/app-hr-be/internal/repository"
 	"github.com/bagusyanuar/app-hr-be/internal/schema"
+	"github.com/bagusyanuar/app-hr-be/pkg/pagination"
 )
 
 type (
 	BranchService interface {
-		FindAll(ctx context.Context, queryParams *schema.BranchQuery) (*[]dto.BranchDTO, error)
+		FindAll(ctx context.Context, queryParams *schema.BranchQuery) (*[]dto.BranchDTO, *pagination.PaginationMeta, error)
 		FindByID(ctx context.Context, id string) (*dto.BranchDTO, error)
 		Create(ctx context.Context, schema *schema.BranchSchema) (*dto.BranchDTO, error)
 	}
@@ -35,11 +36,27 @@ func NewBranchService(
 
 // Create implements BranchService.
 func (b *branchServiceImpl) Create(ctx context.Context, schema *schema.BranchSchema) (*dto.BranchDTO, error) {
-	data := &entity.Branch{
-		Name: schema.Name,
+
+	address := schema.Address
+	contacts := make([]entity.BranchContact, 0)
+	for _, contact := range schema.Contacts {
+		c := entity.BranchContact{
+			Type:  contact.Type,
+			Name:  contact.Name,
+			Value: contact.Value,
+		}
+		contacts = append(contacts, c)
 	}
 
-	branch, err := b.BranchRepository.Create(ctx, data)
+	data := entity.Branch{
+		Name: schema.Name,
+		Address: &entity.BranchAddress{
+			Address: address,
+		},
+		Contacts: contacts,
+	}
+
+	branch, err := b.BranchRepository.Create(ctx, &data)
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +66,14 @@ func (b *branchServiceImpl) Create(ctx context.Context, schema *schema.BranchSch
 }
 
 // FindAll implements BranchService.
-func (b *branchServiceImpl) FindAll(ctx context.Context, queryParams *schema.BranchQuery) (*[]dto.BranchDTO, error) {
-	panic("unimplemented")
+func (b *branchServiceImpl) FindAll(ctx context.Context, queryParams *schema.BranchQuery) (*[]dto.BranchDTO, *pagination.PaginationMeta, error) {
+	branches, pagination, err := b.BranchRepository.FindAll(ctx, queryParams)
+	if err != nil {
+		return &[]dto.BranchDTO{}, pagination, err
+	}
+
+	data := dto.ToBranches(branches)
+	return &data, pagination, nil
 }
 
 // FindByID implements BranchService.

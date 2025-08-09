@@ -10,7 +10,7 @@ CREATE TABLE branch_addresses (
     updated_at TIMESTAMPTZ DEFAULT now(),
 
     -- Foreign key constraint
-    CONSTRAINT fk_branch_addresses_branch FOREIGN KEY (branch_id)
-        REFERENCES branchs(id)
+    CONSTRAINT fk_branch_addresses_branches FOREIGN KEY (branch_id)
+        REFERENCES branches(id)
         ON DELETE SET NULL
 );

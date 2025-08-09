@@ -12,5 +12,6 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerDI) {
 	app.Post("/auth/login", handler.Auth.Login)
 
 	branch := app.Group("/branch")
+	branch.Get("/", handler.Branch.FindAll)
 	branch.Post("/", handler.Branch.Create)
 }
