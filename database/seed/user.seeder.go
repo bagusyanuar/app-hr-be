@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/bagusyanuar/app-hr-be/internal/domain/entity"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -17,18 +16,12 @@ func UserSeeder(db *gorm.DB) {
 
 	email := "superdev@web.id"
 	username := "superdev"
-	password := "@Superdev123"
-
-	hash, errHashed := bcrypt.GenerateFromPassword([]byte(password), 13)
-	if errHashed != nil {
-		log.Printf("❌ failed to hash password: %v", errHashed)
-		return
-	}
+	password := "$2a$13$23Ysb/ADn.t/OmRNVXyf0eOFhpyM5NMelOxClqZ2lz8Uf/HRQ/4C2"
 
 	data := entity.User{
 		Email:    email,
 		Username: username,
-		Password: string(hash),
+		Password: password,
 	}
 
 	var user *entity.User
