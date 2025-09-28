@@ -18,6 +18,8 @@ func initialize() *config.AppConfig {
 	cfgJWT := config.NewJWTManager(viper)
 	validator := config.NewValidator()
 
+	redisClient := config.NewRedisClient(viper)
+
 	return &config.AppConfig{
 		App:       app,
 		Viper:     viper,
@@ -25,6 +27,7 @@ func initialize() *config.AppConfig {
 		Logger:    logger,
 		JWT:       cfgJWT,
 		Validator: validator,
+		Redis:     redisClient,
 	}
 }
 

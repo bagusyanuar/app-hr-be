@@ -15,4 +15,5 @@ type AppConfig struct {
 	DB        *gorm.DB
 	JWT       *JWTConfig
 	Validator *validator.Validate
+	Redis     *RedisClient
 }
