@@ -36,11 +36,6 @@ func NewAuthService(
 func (a *authServiceImpl) Login(ctx context.Context, schema schema.LoginSchema) (accessToken string, refreshToken string, err error) {
 	email := schema.Email
 
-	err = a.Config.Redis.Set("email", email, 0)
-	if err != nil {
-		return "", "", err
-	}
-
 	user, err := a.UserRepository.FindByEmail(ctx, email)
 	if err != nil {
 		return "", "", err
